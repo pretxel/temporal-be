@@ -6,7 +6,7 @@ COPY tsconfig.json ./
 COPY . .
 RUN npm install
 RUN npm run db:deploy || true
-RUN npm run compile
+RUN npm run build
 RUN npm install pm2 -g
 EXPOSE 8080
 CMD ["pm2-runtime", "ecosystem.config.js"]
