@@ -5,10 +5,7 @@ import HealthCheckController from '@application/controllers/HealtcheckController
 const controller = container.resolve(HealthCheckController);
 
 const HealthcheckRoute = async (server: FastifyInstance) => {
-    server.get(
-        '/',
-        controller.healtCheck
-    );
+  server.get('/', controller.healtCheck);
 };
 
 export default HealthcheckRoute;

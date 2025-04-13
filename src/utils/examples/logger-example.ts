@@ -19,9 +19,9 @@ logger.info({ userId: 123 }, 'User logged in');
 
 // With error objects
 try {
-    throw new Error('Something went wrong');
+  throw new Error('Something went wrong');
 } catch (error) {
-    logger.error(error, 'Error occurred during operation');
+  logger.error(error, 'Error occurred during operation');
 }
 
 // Structured logging with child loggers
@@ -30,16 +30,16 @@ requestLogger.info('Processing request');
 
 // Using in a class with dependency injection
 class UserService {
-    constructor(private logger: Logger) { }
+  constructor(private readonly logger: Logger) {}
 
-    createUser(userData: { email: string; name: string }) {
-        this.logger.info({ action: 'createUser', ...userData }, 'Creating new user');
-        // ... user creation logic
-        this.logger.info({ userId: 789 }, 'User created successfully');
-    }
+  createUser(userData: { email: string; name: string }) {
+    this.logger.info({ action: 'createUser', ...userData }, 'Creating new user');
+    // ... user creation logic
+    this.logger.info({ userId: 789 }, 'User created successfully');
+  }
 }
 
 // Register and use the service
 container.registerSingleton(UserService);
 const userService = container.resolve(UserService);
-userService.createUser({ email: 'user@example.com', name: 'John Doe' }); 
+userService.createUser({ email: 'user@example.com', name: 'John Doe' });

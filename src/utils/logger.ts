@@ -30,27 +30,63 @@ export class Logger {
     });
   }
 
-  public trace(message: string | object, ...args: any[]): void {
-    this.logger.trace(message, ...args);
+  public trace(obj: object, msg?: string, ...args: unknown[]): void;
+  public trace(msg: string, ...args: unknown[]): void;
+  public trace(objOrMsg: string | object, msgOrArgs?: string | unknown, ...args: unknown[]): void {
+    if (typeof objOrMsg === 'string') {
+      this.logger.trace(objOrMsg, ...(msgOrArgs ? [msgOrArgs, ...args] : args));
+    } else {
+      this.logger.trace(objOrMsg, msgOrArgs as string | undefined, ...args);
+    }
   }
 
-  public debug(message: string | object, ...args: any[]): void {
-    this.logger.debug(message, ...args);
+  public debug(obj: object, msg?: string, ...args: unknown[]): void;
+  public debug(msg: string, ...args: unknown[]): void;
+  public debug(objOrMsg: string | object, msgOrArgs?: string | unknown, ...args: unknown[]): void {
+    if (typeof objOrMsg === 'string') {
+      this.logger.debug(objOrMsg, ...(msgOrArgs ? [msgOrArgs, ...args] : args));
+    } else {
+      this.logger.debug(objOrMsg, msgOrArgs as string | undefined, ...args);
+    }
   }
 
-  public info(message: string | object, ...args: any[]): void {
-    this.logger.info(message, ...args);
+  public info(obj: object, msg?: string, ...args: unknown[]): void;
+  public info(msg: string, ...args: unknown[]): void;
+  public info(objOrMsg: string | object, msgOrArgs?: string | unknown, ...args: unknown[]): void {
+    if (typeof objOrMsg === 'string') {
+      this.logger.info(objOrMsg, ...(msgOrArgs ? [msgOrArgs, ...args] : args));
+    } else {
+      this.logger.info(objOrMsg, msgOrArgs as string | undefined, ...args);
+    }
   }
 
-  public warn(message: string | object, ...args: any[]): void {
-    this.logger.warn(message, ...args);
+  public warn(obj: object, msg?: string, ...args: unknown[]): void;
+  public warn(msg: string, ...args: unknown[]): void;
+  public warn(objOrMsg: string | object, msgOrArgs?: string | unknown, ...args: unknown[]): void {
+    if (typeof objOrMsg === 'string') {
+      this.logger.warn(objOrMsg, ...(msgOrArgs ? [msgOrArgs, ...args] : args));
+    } else {
+      this.logger.warn(objOrMsg, msgOrArgs as string | undefined, ...args);
+    }
   }
 
-  public error(message: string | object | Error, ...args: any[]): void {
-    this.logger.error(message, ...args);
+  public error(obj: object | Error, msg?: string, ...args: unknown[]): void;
+  public error(msg: string, ...args: unknown[]): void;
+  public error(objOrMsg: string | object | Error, msgOrArgs?: string | unknown, ...args: unknown[]): void {
+    if (typeof objOrMsg === 'string') {
+      this.logger.error(objOrMsg, ...(msgOrArgs ? [msgOrArgs, ...args] : args));
+    } else {
+      this.logger.error(objOrMsg, msgOrArgs as string | undefined, ...args);
+    }
   }
 
-  public fatal(message: string | object | Error, ...args: any[]): void {
-    this.logger.fatal(message, ...args);
+  public fatal(obj: object | Error, msg?: string, ...args: unknown[]): void;
+  public fatal(msg: string, ...args: unknown[]): void;
+  public fatal(objOrMsg: string | object | Error, msgOrArgs?: string | unknown, ...args: unknown[]): void {
+    if (typeof objOrMsg === 'string') {
+      this.logger.fatal(objOrMsg, ...(msgOrArgs ? [msgOrArgs, ...args] : args));
+    } else {
+      this.logger.fatal(objOrMsg, msgOrArgs as string | undefined, ...args);
+    }
   }
 }

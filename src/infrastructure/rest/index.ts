@@ -1,5 +1,5 @@
 /* eslint-disable import/no-named-as-default */
-import fastify, { type FastifyInstance, type FastifyReply } from 'fastify';
+import fastify, { type FastifyInstance } from 'fastify';
 import multipart from '@fastify/multipart';
 import { inject, singleton } from 'tsyringe';
 import { Logger } from '../../utils/logger';
@@ -33,9 +33,7 @@ const schema = {
 export class RestServer {
   private readonly fastifyInstance: FastifyInstance;
 
-  constructor(
-    @inject(Logger) private readonly logger: Logger
-  ) {
+  constructor(@inject(Logger) private readonly logger: Logger) {
     this.fastifyInstance = fastify({
       logger: false, // Disable built-in logger since we're using our own
       trustProxy: true
@@ -43,7 +41,6 @@ export class RestServer {
   }
 
   // Initialize in a separate method
-
 
   // private registerSchemas(AppSchemas: any): void {
   //   for (const schema of [
@@ -131,7 +128,7 @@ export class RestServer {
     this.fastifyInstance.addHook('preHandler', (req, reply, next) => {
       req.jwt = this.fastifyInstance?.jwt;
       next();
-    });
+    })
 
     // Add logger middleware
     this.fastifyInstance.addHook('preHandler', loggerMiddleware);

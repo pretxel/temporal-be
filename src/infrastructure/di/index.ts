@@ -4,7 +4,7 @@ import { UserRepository } from '../repository/UserRepository';
 
 // Register repositories
 container.register('IUserRepository', {
-    useClass: UserRepository
+  useClass: UserRepository
 });
 
-export { container }; 
+export { container };

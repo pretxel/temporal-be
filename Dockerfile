@@ -5,9 +5,6 @@ COPY tsconfig.json ./
 
 COPY . .
 RUN npm install
-RUN if [ -e "/usr/.aptible.env" ]; then cp /usr/.aptible.env .env; else echo "El archivo /usr/.aptible.env no existe."; fi
-RUN if [ -e "/usr/.aptible.env" ]; then npm run db:deploy; else echo "El archivo /usr/.aptible.env no existe."; fi
-RUN if [ -e "/usr/.aptible.env" ]; then npm run db:seed; else echo "El archivo /usr/.aptible.env no existe."; fi
 RUN npm run db:deploy || true
 RUN npm run compile
 RUN npm install pm2 -g

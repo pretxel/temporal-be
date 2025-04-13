@@ -14,13 +14,13 @@ const routes = async (server: FastifyInstance) => {
       // Cast to the expected type for TypeScript
       const user = request.user as { id: number; email: string };
 
-      return reply.status(200).send({
+      return await reply.status(200).send({
         id: user.id,
         email: user.email
       });
     } catch (error) {
       request.log.error(error as Error);
-      return reply.status(500).send({
+      return await reply.status(500).send({
         statusCode: 500,
         error: 'Internal Server Error',
         message: 'An error occurred while retrieving user profile'
