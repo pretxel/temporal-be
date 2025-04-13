@@ -1,0 +1,104 @@
+name: Release workflow
+
+on:
+  # push:
+  #   branches: ['master']
+
+  workflow_dispatch:
+    inputs:
+      deployment:
+        type: choice
+        required: true
+        description: 'Deployment type'
+        options:
+          - STAGE
+          - PROD
+      version:
+        description: 'The version to release. The version should be the same as version in package.json. For example, v1.0.0'
+
+  repository_dispatch:
+    types:
+      - webhook
+
+env:
+  APTIBLE_ENVIRONMENT: ${{ secrets.APTIBLE_ENVIRONMENT }}
+  APTIBLE_APP: ${{ secrets.APTIBLE_APP }}
+  APTIBLE_APP_API: ${{ secrets.APTIBLE_APP_API }}
+  APTIBLE_PRIVATE_REGISTRY_USERNAME: ${{ secrets.APTIBLE_PRIVATE_REGISTRY_USERNAME }}
+  APTIBLE_PRIVATE_REGISTRY_PASSWORD: ${{ secrets.APTIBLE_PRIVATE_REGISTRY_PASSWORD }}
+  IMAGE_NAME_API: ${{ secrets.IMAGE_NAME_API }}
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: npm install, build and test
+        run: |
+          npm install
+          npm run build --if-present
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.deployment }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create SSH key
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.APTIBLE_GIT_SSH_KEY }}
+
+      - name: Deploy to Aptible API
+        uses: aptible/aptible-deploy-action@v1.4.0
+        with:
+          username: ${{ secrets.APTIBLE_USERNAME }}
+          password: ${{ secrets.APTIBLE_PASSWORD }}
+          environment: ${{ secrets.APTIBLE_ENVIRONMENT }}
+          app: ${{ secrets.APTIBLE_APP_API }}
+          docker_img: ${{ secrets.IMAGE_NAME_API }}
+          private_registry_username: ${{ secrets.APTIBLE_PRIVATE_REGISTRY_USERNAME }}
+          private_registry_password: ${{ secrets.APTIBLE_PRIVATE_REGISTRY_PASSWORD }}
+
+  slackNotification:
+    needs: release
+    name: Slack Notification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_ICON: ${{ secrets.SLACK_ICON }}
+          SLACK_FOOTER: ${{ secrets.SLACK_FOOTER }}
+          SLACK_MESSAGE: Release to ${{ inputs.deployment }} environment
+
+  # automated-api-tests:
+  #  needs: release
+  #  runs-on: ubuntu-latest
+
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Install Postman CLI
+  #       run: |
+  #         curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+  #     - name: Login to Postman CLI
+  #       run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+  #     - name: Run API tests
+  #       run: |
+  #         postman collection run "25953897-ce025ee5-de8a-4e68-805f-2de648bab189" -e "25953897-8cc4f479-d21a-44f2-85b3-d3d4de357e52"

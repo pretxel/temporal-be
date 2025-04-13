@@ -1,0 +1,11 @@
+meta {
+  name: healthcheck
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://api.sandbox:8080/healthcheck
+  body: none
+  auth: none
+}

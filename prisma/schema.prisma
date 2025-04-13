@@ -1,0 +1,33 @@
+generator client {
+    provider      = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x"]
+    output        = "../node_modules/.prisma/client"
+}
+
+datasource db {
+    provider          = "postgresql"
+    url               = env("DATABASE_URL")
+    shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model User {
+    id       Int     @id @default(autoincrement())
+    email    String  @unique
+    password String
+    salt     String
+    Mentee   Mentee?
+
+    @@map("users")
+}
+
+model Mentee {
+    id       Int     @id @default(autoincrement())
+    name     String
+    lastName String
+    title    String?
+    mobile   String
+    user     User    @relation(fields: [userId], references: [id])
+    userId   Int     @unique
+
+    @@map("mentees")
+}
